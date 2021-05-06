@@ -12,3 +12,9 @@ p {
     margin: 0;
     color: #fff;
 }
+#recursions {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 1.3em;
+}

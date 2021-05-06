@@ -1,6 +1,9 @@
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 let angle;
+let startLength;
+let lengthChange = .75;
+let count = 1;
 
 let init = () => {
     canvas.width = window.innerWidth;
@@ -12,6 +15,7 @@ let getAngle = (rotation)  => {
 }
 
 let branch = (x, y, len, previousAngle) => {
+    count++;
     ctx.beginPath();
     ctx.moveTo(x, y);
     let xOffset = x + len * Math.sin(previousAngle + angle);
@@ -19,8 +23,7 @@ let branch = (x, y, len, previousAngle) => {
     ctx.lineTo(xOffset, yOffset);
     ctx.stroke();
     if(len > 4)  {
-        console.log('right')
-        branch(xOffset, yOffset, len*.75, previousAngle + angle);
+        branch(xOffset, yOffset, len*lengthChange, previousAngle + angle);
     }
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -29,8 +32,7 @@ let branch = (x, y, len, previousAngle) => {
     ctx.lineTo(xOffset, yOffset);
     ctx.stroke();
     if(len > 4)  {
-        console.log('left')
-        branch(xOffset, yOffset, len*.75, previousAngle-angle);
+        branch(xOffset, yOffset, len*lengthChange, previousAngle-angle);
     }
 }
 
@@ -42,23 +44,29 @@ let fps;
 
 let draw = () => {
     ctx.clearRect(0,0,canvas.width,canvas.height)
-    ctx.fillStyle = "#555555";
+    ctx.fillStyle = "#005500";
     ctx.strokeStyle = "#ffffff";
     ctx.fillRect(0,0,canvas.width,canvas.height)
     ctx.fillStyle = "#ffffff";
+    ctx.lineWidth = 1; 
     ctx.beginPath();
     ctx.moveTo(canvas.width/2, canvas.height);
-    let length = 150;
-    ctx.lineTo(canvas.width/2, canvas.height - length);
+    
+    ctx.lineTo(canvas.width/2, canvas.height - startLength);
     ctx.stroke();
-    branch(canvas.width/2, canvas.height - length, length*.75, Math.PI);
+    
+    branch(canvas.width/2, canvas.height - startLength, startLength*lengthChange, Math.PI);
     
 }
 
 let update = () => {
     angle = parseFloat(document.getElementById('angle-slider').value * Math.PI * -1);
+    startLength = document.getElementById('length-slider').value;
     document.getElementById('angle-text').innerHTML = 'Angle: ' + document.getElementById('angle-slider').value
+    document.getElementById('branch-length').innerHTML = "Length: " + startLength;
     draw();
+    document.getElementById('recursions').innerHTML = count;
+    count=1;
 }
 function gameLoop(timeStamp) {
     // Calculate the number of seconds passed since the last frame
